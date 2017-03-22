@@ -7,7 +7,7 @@ This repository contains an implementation of the `Monkey` language interpreter 
 The current implementation contains a REPL which lexes user input and prints a list of the lexed tokens.
 
 ```
-$ go run main.go
+$ monkey
 Hello jamesroutley! This is the Monkey programming language!
 Feel free to type in commands.
 >> 10 + 10;
