@@ -25,5 +25,5 @@ The interpreter is a work in progress.
 - [x] Define tokens
 - [x] Lexer
 - [x] Basic REPL
-- [] Parser
-- [] Evaluator
+- [ ] Parser
+- [ ] Evaluator
