@@ -1,12 +1,16 @@
 package token
 
+// TokenType defines the type of a token
 type TokenType string
 
+// Token represents a Monkey programming language token.
+// A token is a single piece of syntax, such as a variable name, "=", "==".
 type Token struct {
 	Type    TokenType
 	Literal string
 }
 
+// Token Types
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
@@ -22,10 +26,8 @@ const (
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
-
 	LT = "<"
 	GT = ">"
-
 	EQ     = "=="
 	NOT_EQ = "!="
 
@@ -58,6 +60,9 @@ var keywords = map[string]TokenType{
 	"return": RETURN,
 }
 
+// LookupIdent returns the token type associated with the identifier ident
+// If ident happens to be a keyword, the keyword token type is returned.
+// If ident is not a keyword, the IDENT token type is returned.
 func LookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok
