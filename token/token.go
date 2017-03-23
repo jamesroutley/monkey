@@ -26,10 +26,10 @@ const (
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
-	LT = "<"
-	GT = ">"
-	EQ     = "=="
-	NOT_EQ = "!="
+	LT       = "<"
+	GT       = ">"
+	EQ       = "=="
+	NOT_EQ   = "!="
 
 	// Delimiters
 	COMMA     = ","
