@@ -2,6 +2,7 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/jamesroutley/monkey/ast"
 	"github.com/jamesroutley/monkey/lexer"
 	"github.com/jamesroutley/monkey/token"
@@ -13,11 +14,16 @@ type Parser struct {
 
 	curToken  token.Token // Current token being parsed.
 	peekToken token.Token // Next token to be parsed.
+
+	errors []string
 }
 
 // New initialises and returns a pointer to a Parser.
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := &Parser{
+			l: l,
+			errors: []string{},
+	}
 
 	// Read two tokens, so curToken and peekToken are both set.
 	p.nextToken()
@@ -30,6 +36,11 @@ func New(l *lexer.Lexer) *Parser {
 func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
+}
+
+// Errors returns the Parser's errors.
+func (p *Parser) Errors() []string {
+	return p.errors
 }
 
 // ParseProgram parses the program loaded into the lexer and returns its AST.
@@ -83,6 +94,12 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	return stmt
 }
 
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
+		t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
+}
+
 func (p *Parser) curTokenIs(t token.TokenType) bool {
 	return p.curToken.Type == t
 }
@@ -95,6 +112,8 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 	if p.peekTokenIs(t) {
 		p.nextToken()
 		return true
+	} else {
+		p.peekError(t)
+		return false
 	}
-	return false
 }
