@@ -58,6 +58,19 @@ func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
 }
 
+// ReturnStatement represents a return statement in the AST.
+type ReturnStatement struct {
+	Token token.Token
+	ReturnValue Expression
+}
+
+func (rs *ReturnStatement) statementNode() {}
+
+// TokenLiteral returns the literal value of the return token.
+func (rs *ReturnStatement) TokenLiteral() string {
+	return rs.Token.Literal
+}
+
 // Identifier represents a variable name in the AST.
 type Identifier struct {
 	Token token.Token
