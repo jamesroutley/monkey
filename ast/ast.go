@@ -56,7 +56,7 @@ func (p *Program) TokenLiteral() string {
 // Let statements are denoted by the keyword 'let'.
 type LetStatement struct {
 	Token token.Token
-	Name  *Identifier  // Name of the variable being assigned to
+	Name  *Identifier // Name of the variable being assigned to
 	Value Expression  // Value of the variable being assigned to
 }
 
@@ -82,7 +82,7 @@ func (ls *LetStatement) TokenLiteral() string {
 
 // ReturnStatement represents a return statement in the AST.
 type ReturnStatement struct {
-	Token token.Token
+	Token       token.Token
 	ReturnValue Expression
 }
 
@@ -105,7 +105,7 @@ func (rs *ReturnStatement) TokenLiteral() string {
 
 type ExpressionStatement struct {
 	// First token of the expression
-	Token token.Token
+	Token      token.Token
 	Expression Expression
 }
 
