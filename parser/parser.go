@@ -8,22 +8,40 @@ import (
 	"github.com/jamesroutley/monkey/token"
 )
 
+// Consts define precidence order of operators.
+// e.g. multiplication should happen before addition.
+const (
+	_ int = iota
+	LOWEST
+	EQUALS      // ==
+	LESSGREATER // > or <
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -x or !x
+	CALL        // myFunction(x)
+)
+
 // Parser implements the parser for the Monkey language.
 type Parser struct {
-	l *lexer.Lexer // Lexer used to lex the Money code.
+	l      *lexer.Lexer // Lexer used to lex the Money code.
+	errors []string     // Errors produced while parsing.
 
 	curToken  token.Token // Current token being parsed.
 	peekToken token.Token // Next token to be parsed.
 
-	errors []string
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
 }
 
 // New initialises and returns a pointer to a Parser.
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
-			l: l,
-			errors: []string{},
+		l:      l,
+		errors: []string{},
 	}
+
+	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
 
 	// Read two tokens, so curToken and peekToken are both set.
 	p.nextToken()
@@ -61,6 +79,16 @@ func (p *Parser) ParseProgram() *ast.Program {
 	return program
 }
 
+// registerPrefix associates a prefixParseFn with a token.TokenType
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+// registerInfix associates an infixParseFn with a token.TokenType
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
+}
+
 // parseStatement parses any Monkey statement.
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
@@ -69,7 +97,7 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return p.parseReturnStatement()
 	default:
-		return nil
+		return p.parseExpressionStatement()
 	}
 }
 
@@ -109,6 +137,30 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	return stmt
 }
 
+func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	stmt := &ast.ExpressionStatement{Token: p.curToken}
+	stmt.Expression = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseExpression(precidence int) ast.Expression {
+	prefix := p.prefixParseFns[p.curToken.Type]
+	if prefix == nil {
+		return nil
+	}
+	leftExp := prefix()
+	return leftExp
+}
+
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+}
+
 func (p *Parser) peekError(t token.TokenType) {
 	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
 		t, p.peekToken.Type)
@@ -132,3 +184,8 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 		return false
 	}
 }
+
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
