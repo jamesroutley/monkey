@@ -6,6 +6,7 @@ import (
 	"github.com/jamesroutley/monkey/ast"
 	"github.com/jamesroutley/monkey/lexer"
 	"github.com/jamesroutley/monkey/token"
+	"log"
 	"strconv"
 )
 
@@ -69,6 +70,7 @@ func (p *Parser) Errors() []string {
 // Monkey programs consist of a list of statements. These statements are
 // recursively parsed, one by one.
 func (p *Parser) ParseProgram() *ast.Program {
+	log.Printf("Parsing program")
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 
@@ -79,7 +81,8 @@ func (p *Parser) ParseProgram() *ast.Program {
 		}
 		p.nextToken()
 	}
-
+	log.Println("Finished parsing")
+	log.Printf("Program: %v", program)
 	return program
 }
 
@@ -108,6 +111,7 @@ func (p *Parser) parseStatement() ast.Statement {
 // parseLetStatement parses 'let' statements.
 // e.g. 'let x = 5;'
 func (p *Parser) parseLetStatement() *ast.LetStatement {
+	log.Println("Parsing 'let' statement")
 	stmt := &ast.LetStatement{Token: p.curToken}
 
 	if !p.expectPeek(token.IDENT) {
@@ -129,6 +133,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 }
 
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	log.Println("Parsing 'return' statement")
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 
 	p.nextToken()
@@ -142,6 +147,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	log.Println("Parsing 'expression' statement")
 	stmt := &ast.ExpressionStatement{Token: p.curToken}
 	stmt.Expression = p.parseExpression(LOWEST)
 
@@ -153,20 +159,25 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 }
 
 func (p *Parser) parseExpression(precidence int) ast.Expression {
+	log.Printf("Parsing expression. Precidence = %d", precidence)
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
 		return nil
 	}
+	log.Printf("Prefix = '%s'", p.curToken.Type)
 	leftExp := prefix()
+	log.Printf("Left expression = ")
 	return leftExp
 }
 
 func (p *Parser) parseIdentifier() ast.Expression {
+	log.Printf("Parsing identifier")
 	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {
+	log.Printf("Parsing integer literal")
 	lit := &ast.IntegerLiteral{Token: p.curToken}
 
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
@@ -180,6 +191,7 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 }
 
 func (p *Parser) parsePrefixExpression() ast.Expression {
+	log.Printf("Parsing prefix expression")
 	expression := &ast.PrefixExpression{
 		Token: p.curToken,
 		Operator: p.curToken.Literal,
