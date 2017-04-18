@@ -156,9 +156,12 @@ func (il *IntegerLiteral) String() string {
 	return il.Token.Literal
 }
 
+// PrefixExpression represents expressions with prefix operators.
+// e.g. !true or -15
 type PrefixExpression struct {
 	// The prefix token, e.g. '!'
 	Token token.Token
+	// The prefix operator, '!' or '-'
 	Operator string
 	// Expression to the right of the operator
 	Right Expression
