@@ -2,8 +2,8 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"io/ioutil"
+	"log"
 	"testing"
 
 	"github.com/jamesroutley/monkey/ast"
