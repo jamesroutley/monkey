@@ -38,19 +38,18 @@ type Program struct {
 	Statements []Statement
 }
 
+func (p *Program) TokenLiteral() string {
+	if len(p.Statements) > 0 {
+		return p.Statements[0].TokenLiteral()
+	}
+	return ""
+}
 func (p *Program) String() string {
 	var out bytes.Buffer
 	for _, s := range p.Statements {
 		out.WriteString(s.String())
 	}
 	return out.String()
-}
-
-func (p *Program) TokenLiteral() string {
-	if len(p.Statements) > 0 {
-		return p.Statements[0].TokenLiteral()
-	}
-	return ""
 }
 
 // LetStatement represents a variable binding statement in the AST.
@@ -61,6 +60,12 @@ type LetStatement struct {
 	Value Expression  // Value of the variable being assigned to
 }
 
+func (ls *LetStatement) statementNode() {}
+// TokenLiteral returns the literal value of the token associated with the
+// statement
+func (ls *LetStatement) TokenLiteral() string {
+	return ls.Token.Literal
+}
 func (ls *LetStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString(ls.TokenLiteral() + " ")
@@ -73,20 +78,17 @@ func (ls *LetStatement) String() string {
 	return out.String()
 }
 
-func (ls *LetStatement) statementNode() {}
-
-// TokenLiteral returns the literal value of the token associated with the
-// statement
-func (ls *LetStatement) TokenLiteral() string {
-	return ls.Token.Literal
-}
-
 // ReturnStatement represents a return statement in the AST.
 type ReturnStatement struct {
 	Token       token.Token
 	ReturnValue Expression
 }
 
+func (rs *ReturnStatement) statementNode() {}
+// TokenLiteral returns the literal value of the return token.
+func (rs *ReturnStatement) TokenLiteral() string {
+	return rs.Token.Literal
+}
 func (rs *ReturnStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString(rs.TokenLiteral() + " ")
@@ -97,31 +99,22 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 }
 
-func (rs *ReturnStatement) statementNode() {}
-
-// TokenLiteral returns the literal value of the return token.
-func (rs *ReturnStatement) TokenLiteral() string {
-	return rs.Token.Literal
-}
-
 type ExpressionStatement struct {
 	// First token of the expression
 	Token      token.Token
 	Expression Expression
 }
 
+func (es *ExpressionStatement) statementNode() {}
+func (es *ExpressionStatement) TokenLiteral() string {
+	return es.Token.Literal
+}
 func (es *ExpressionStatement) String() string {
 	if es.Expression != nil {
 		return es.Expression.String()
 	} else {
 		return ""
 	}
-}
-
-func (es *ExpressionStatement) statementNode() {}
-
-func (es *ExpressionStatement) TokenLiteral() string {
-	return es.Token.Literal
 }
 
 // Identifier represents a variable name in the AST.
@@ -133,9 +126,7 @@ type Identifier struct {
 func (i *Identifier) String() string {
 	return i.Value
 }
-
 func (i *Identifier) expressionNode() {}
-
 // TokenLiteral returns the literal value of the token associated with the
 // identifier
 func (i *Identifier) TokenLiteral() string {
@@ -148,11 +139,9 @@ type IntegerLiteral struct {
 }
 
 func (il *IntegerLiteral) expressionNode() {}
-
 func (il *IntegerLiteral) TokenLiteral() string {
 	return il.Token.Literal
 }
-
 func (il *IntegerLiteral) String() string {
 	return il.Token.Literal
 }
@@ -169,11 +158,9 @@ type PrefixExpression struct {
 }
 
 func (pe *PrefixExpression) expressionNode() {}
-
 func (pe *PrefixExpression) TokenLiteral() string {
 	return pe.Token.Literal
 }
-
 func (pe *PrefixExpression) String() string {
 	var out bytes.Buffer
 	// Add brackets to remove ambiguity about which operands belong to which
@@ -193,11 +180,9 @@ type InfixExpression struct {
 }
 
 func (oe *InfixExpression) expressionNode() {}
-
 func (oe *InfixExpression) TokenLiteral() string {
 	return oe.Token.Literal
 }
-
 func (oe *InfixExpression) String() string {
 	var out bytes.Buffer
 	out.WriteString("(")
@@ -214,11 +199,9 @@ type Boolean struct {
 }
 
 func (b *Boolean) expressionNode() {}
-
 func (b *Boolean) TokenLiteral() string {
 	return b.Token.Literal
 }
-
 func (b *Boolean) String() string {
 	return b.Token.Literal
 }
@@ -231,9 +214,7 @@ type IfExpression struct {
 }
 
 func (ie *IfExpression) expressionNode() {}
-
 func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
-
 func (ie *IfExpression) String() string {
 	var out bytes.Buffer
 	out.WriteString("if")
