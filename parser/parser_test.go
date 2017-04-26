@@ -305,11 +305,6 @@ func TestIfElseExpression(t *testing.T) {
 		return
 	}
 
-	// if exp.Alternative != nil {
-	// 	t.Errorf("exp.Alternative.Statements was not nil. got %+v",
-	// 		exp.Alternative)
-	// }
-
 	if len(exp.Alternative.Statements) != 1 {
 		t.Errorf("Alternative doesn't have 1 statement. got %d",
 			len(exp.Alternative.Statements))
