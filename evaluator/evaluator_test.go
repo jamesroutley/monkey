@@ -1,12 +1,13 @@
 package evaluator
 
 import (
+	"io/ioutil"
+	"log"
+	"testing"
+
 	"github.com/jamesroutley/monkey/lexer"
 	"github.com/jamesroutley/monkey/object"
 	"github.com/jamesroutley/monkey/parser"
-	"log"
-	"io/ioutil"
-	"testing"
 )
 
 func init() {
@@ -15,8 +16,8 @@ func init() {
 }
 
 func TestEvalIntegerExpression(t *testing.T) {
-	tests := []struct{
-		input string
+	tests := []struct {
+		input    string
 		expected int64
 	}{
 		{"5", 5},
@@ -26,6 +27,21 @@ func TestEvalIntegerExpression(t *testing.T) {
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		testIntegerObject(t, evaluated, tt.expected)
+	}
+}
+
+func TestEvalBooleanExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{"true", true},
+		{"false", false},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testBooleanObject(t, evaluated, tt.expected)
 	}
 }
 
@@ -45,6 +61,20 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 	}
 	if result.Value != expected {
 		t.Errorf("object has wrong value, expected: %d, got: %d", expected,
+			result.Value)
+		return false
+	}
+	return true
+}
+
+func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
+	result, ok := obj.(*object.Boolean)
+	if !ok {
+		t.Errorf("object is not a Boolean, got %T", obj)
+		return false
+	}
+	if result.Value != expected {
+		t.Errorf("object has wrong value, expected %t, got %t", expected,
 			result.Value)
 		return false
 	}

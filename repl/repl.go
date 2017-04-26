@@ -3,9 +3,11 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"io"
+
+	"github.com/jamesroutley/monkey/evaluator"
 	"github.com/jamesroutley/monkey/lexer"
 	"github.com/jamesroutley/monkey/parser"
-	"io"
 )
 
 // PROMPT is the prompt string to print at the repl.
@@ -32,15 +34,18 @@ func Start(in io.Reader, out io.Writer) {
 			printParserErrors(out, p.Errors())
 			continue
 		}
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
 func printParserErrors(out io.Writer, errors []string) {
 	io.WriteString(out, "parser errors:\n")
 	for _, msg := range errors {
-		io.WriteString(out, "\t" + msg + "\n")
+		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
-
