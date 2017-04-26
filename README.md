@@ -4,17 +4,14 @@ This repository contains an implementation of the `Monkey` language interpreter 
 
 ## Example
 
-The current implementation contains a REPL which lexes user input and prints a list of the lexed tokens.
+The current implementation contains a REPL which parses user input and prints the parsed program.
 
 ```
 $ monkey
 Hello jamesroutley! This is the Monkey programming language!
 Feel free to type in commands.
->> 10 + 10;
-{Type:INT Literal:10}
-{Type:+ Literal:+}
-{Type:INT Literal:10}
-{Type:; Literal:;}
+>> 5 + 5 * 10;
+(5 + (5 * 10))
 >>
 ```
 
@@ -25,5 +22,5 @@ The interpreter is a work in progress.
 - [x] Define tokens
 - [x] Lexer
 - [x] Basic REPL
-- [ ] Parser
+- [x] Parser
 - [ ] Evaluator
