@@ -61,6 +61,7 @@ type LetStatement struct {
 }
 
 func (ls *LetStatement) statementNode() {}
+
 // TokenLiteral returns the literal value of the token associated with the
 // statement
 func (ls *LetStatement) TokenLiteral() string {
@@ -85,6 +86,7 @@ type ReturnStatement struct {
 }
 
 func (rs *ReturnStatement) statementNode() {}
+
 // TokenLiteral returns the literal value of the return token.
 func (rs *ReturnStatement) TokenLiteral() string {
 	return rs.Token.Literal
@@ -127,6 +129,7 @@ func (i *Identifier) String() string {
 	return i.Value
 }
 func (i *Identifier) expressionNode() {}
+
 // TokenLiteral returns the literal value of the token associated with the
 // identifier
 func (i *Identifier) TokenLiteral() string {
@@ -213,7 +216,7 @@ type IfExpression struct {
 	Alternative *BlockStatement
 }
 
-func (ie *IfExpression) expressionNode() {}
+func (ie *IfExpression) expressionNode()      {}
 func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *IfExpression) String() string {
 	var out bytes.Buffer
